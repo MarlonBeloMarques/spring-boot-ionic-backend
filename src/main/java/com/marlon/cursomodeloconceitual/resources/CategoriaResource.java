@@ -17,9 +17,9 @@ public class CategoriaResource {
 	@Autowired
 	private CategoriaService service;
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}", method=RequestMethod.GET) // pegar pelo id
 	public ResponseEntity<?> find(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
-		Categoria obj = service.buscar(id);	
-		return ResponseEntity.ok().body(obj);
+		Categoria obj = service.buscar(id);	 //vai buscar o id passado
+		return ResponseEntity.ok().body(obj); //retorna ok o obj
 	}
 }
