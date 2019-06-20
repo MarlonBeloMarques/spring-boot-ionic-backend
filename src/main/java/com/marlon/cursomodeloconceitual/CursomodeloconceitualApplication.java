@@ -1,5 +1,6 @@
 package com.marlon.cursomodeloconceitual;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import com.marlon.cursomodeloconceitual.domain.Cidade;
 import com.marlon.cursomodeloconceitual.domain.Cliente;
 import com.marlon.cursomodeloconceitual.domain.Endereco;
 import com.marlon.cursomodeloconceitual.domain.Estado;
+import com.marlon.cursomodeloconceitual.domain.Pagamento;
+import com.marlon.cursomodeloconceitual.domain.PagamentoComBoleto;
+import com.marlon.cursomodeloconceitual.domain.PagamentoComCartao;
+import com.marlon.cursomodeloconceitual.domain.Pedido;
 import com.marlon.cursomodeloconceitual.domain.Produto;
+import com.marlon.cursomodeloconceitual.domain.enums.EstadoPagamento;
 import com.marlon.cursomodeloconceitual.domain.enums.TipoCliente;
 import com.marlon.cursomodeloconceitual.repositories.CategoriaRepository;
 import com.marlon.cursomodeloconceitual.repositories.CidadeRepository;
 import com.marlon.cursomodeloconceitual.repositories.ClienteRepository;
 import com.marlon.cursomodeloconceitual.repositories.EnderecoRepository;
 import com.marlon.cursomodeloconceitual.repositories.EstadoRepository;
+import com.marlon.cursomodeloconceitual.repositories.PagamentoRepository;
+import com.marlon.cursomodeloconceitual.repositories.PedidoRepository;
 import com.marlon.cursomodeloconceitual.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -36,6 +44,10 @@ public class CursomodeloconceitualApplication implements CommandLineRunner {
 	private ClienteRepository clienteRepository;
 	@Autowired // pode ser injetada
 	private EnderecoRepository enderecoRepository;
+	@Autowired // pode ser injetada
+	private PagamentoRepository pagamentoRepository;
+	@Autowired // pode ser injetada
+	private PedidoRepository pedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomodeloconceitualApplication.class, args);
@@ -85,6 +97,22 @@ public class CursomodeloconceitualApplication implements CommandLineRunner {
 		
 		clienteRepository.save(Arrays.asList(cli1));
 		enderecoRepository.save(Arrays.asList(e1,e2));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:32"), cli1, e2);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1,ped2));
+		
+		pedidoRepository.save(Arrays.asList(ped1,ped2));
+		pagamentoRepository.save(Arrays.asList(pagto1,pagto2));
 		
 	}
 
