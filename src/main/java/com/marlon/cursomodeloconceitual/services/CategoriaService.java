@@ -1,10 +1,12 @@
 package com.marlon.cursomodeloconceitual.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.marlon.cursomodeloconceitual.domain.Categoria;
 import com.marlon.cursomodeloconceitual.repositories.CategoriaRepository;
+import com.marlon.cursomodeloconceitual.services.exceptions.DataIntegrityException;
 import com.marlon.cursomodeloconceitual.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -30,5 +32,15 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) { // quando o id não é nulo, ele atualiza
 		find(obj.getId()); // verifica se existi
 		return repo.save(obj);
+	}
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.delete(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
+		}
 	}
 }
