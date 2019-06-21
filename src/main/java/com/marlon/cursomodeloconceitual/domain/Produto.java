@@ -15,7 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -29,7 +28,7 @@ public class Produto implements Serializable {
 	private Double preco;
 	
 	//instancia muitos para muitos jpa, referencia banco de dados
-	@JsonBackReference // tratamento, como ja foi feito a referencia em categoria, eu não busco mais
+	@JsonIgnore // tratamento, como ja foi feito a referencia em categoria, eu não busco mais
 	@ManyToMany
 	@JoinTable(name = "PRODUTO_CATEGORIA",
 				joinColumns = @JoinColumn(name = "produto_id"),  //nome da chave estrangeira
