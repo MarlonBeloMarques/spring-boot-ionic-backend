@@ -1,6 +1,8 @@
 package com.marlon.cursomodeloconceitual.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.marlon.cursomodeloconceitual.domain.Categoria;
+import com.marlon.cursomodeloconceitual.dto.CategoriaDTO;
 import com.marlon.cursomodeloconceitual.services.CategoriaService;
 
 @RestController
@@ -50,5 +53,13 @@ public class CategoriaResource {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method=RequestMethod.GET) // pegar pelo id
+	// relacao com HTTP
+	public ResponseEntity<List<CategoriaDTO>> findAll() { // o id acima faz referencia com o de baixo
+		List<Categoria> list = service.findAll();	 //vai buscar o id passado
+		List<CategoriaDTO> listDto = list.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList()); //percorre a lista , mapea em cada objeto da lista criando um objeto dto e volta para o tipo lista 
+		return ResponseEntity.ok().body(listDto); //retorna ok o obj
 	}
 }
