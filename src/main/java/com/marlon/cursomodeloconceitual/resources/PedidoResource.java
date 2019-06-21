@@ -19,8 +19,8 @@ public class PedidoResource {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET) // pegar pelo id
 	// relacao com HTTP
-	public ResponseEntity<?> find(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
-		Pedido obj = service.buscar(id);	 //vai buscar o id passado
+	public ResponseEntity<Pedido> find(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
+		Pedido obj = service.find(id);	 //vai buscar o id passado
 		return ResponseEntity.ok().body(obj); //retorna ok o obj
 	}
 }

@@ -23,16 +23,25 @@ public class CategoriaResource {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET) // pegar pelo id
 	// relacao com HTTP
-	public ResponseEntity<?> find(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
-		Categoria obj = service.buscar(id);	 //vai buscar o id passado
+	public ResponseEntity<Categoria> find(@PathVariable Integer id) { // o id acima faz referencia com o de baixo
+		Categoria obj = service.find(id);	 //vai buscar o id passado
 		return ResponseEntity.ok().body(obj); //retorna ok o obj
 	}
 	
+	//iNSERIR
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody Categoria obj){ // @RequestBody = faz o json ser convertido para objeto java
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri(); // enumerar de forma crescente o id do uri
 		return ResponseEntity.created(uri).build();
+	}
+	
+	//Alterar
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id){
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
 	}
 }
