@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.marlon.cursomodeloconceitual.domain.Categoria;
+import com.marlon.cursomodeloconceitual.dto.CategoriaDTO;
 import com.marlon.cursomodeloconceitual.repositories.CategoriaRepository;
 import com.marlon.cursomodeloconceitual.services.exceptions.DataIntegrityException;
 import com.marlon.cursomodeloconceitual.services.exceptions.ObjectNotFoundException;
@@ -58,6 +59,11 @@ public class CategoriaService {
 	
 		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
+	}
+	
+	//a partir de um dto
+	public Categoria fromDTO(CategoriaDTO objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
 	}
 	
 	

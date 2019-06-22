@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +37,8 @@ public class CategoriaResource {
 	
 	//iNSERIR
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria obj){ // @RequestBody = faz o json ser convertido para objeto java
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto){ //@Valid= para poder prosseguir, precisa ser validado @RequestBody = faz o json ser convertido para objeto java
+		Categoria obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri(); // enumerar de forma crescente o id do uri
@@ -44,7 +47,8 @@ public class CategoriaResource {
 	
 	//Alterar
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id){
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
+		Categoria obj = service.fromDTO(objDto);
 		obj.setId(id);
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
@@ -71,7 +75,7 @@ public class CategoriaResource {
 			@RequestParam(value="page", defaultValue="0")Integer page, // valor padrão 
 			@RequestParam(value="linesPerPage", defaultValue="24")Integer linesPerPage, 
 			@RequestParam(value="orderBy", defaultValue="nome")String orderBy, 
-			@RequestParam(value="direction", defaultValue="ASC")String direction) { // o id acima faz referencia com o de baixo
+			@RequestParam(value="direction", defaultValue="ASC")String direction) { // o id acima faz referencia com o de baixo, defaultValue = (ascendente ou descendente)
 		Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);	 //vai buscar o id passado
 		Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO(obj)); 
 		return ResponseEntity.ok().body(listDto); //retorna ok o obj
