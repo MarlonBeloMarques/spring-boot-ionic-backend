@@ -36,8 +36,9 @@ public class CategoriaService {
 	}
 	
 	public Categoria update(Categoria obj) { // quando o id não é nulo, ele atualiza
-		find(obj.getId()); // verifica se existi
-		return repo.save(obj);
+		Categoria newObj = find(obj.getId()); // verifica se existe
+		updateData(newObj, obj); // atualiza esse dado com base no objeto como argumento
+		return repo.save(newObj);
 	}
 	
 	public void delete(Integer id) {
@@ -64,6 +65,10 @@ public class CategoriaService {
 	//a partir de um dto
 	public Categoria fromDTO(CategoriaDTO objDto) {
 		return new Categoria(objDto.getId(), objDto.getNome());
+	}
+	
+	private void updateData(Categoria newObj, Categoria obj) {
+		newObj.setNome(obj.getNome());
 	}
 	
 	
