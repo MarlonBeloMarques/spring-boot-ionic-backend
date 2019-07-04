@@ -11,8 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.marlon.cursomodeloconceitual.services.DBService;
+import com.marlon.cursomodeloconceitual.services.EmailService;
+import com.marlon.cursomodeloconceitual.services.SmtpEmailService;
 
-// tudo que estiver dentro da classe so será ativado quando o profile de teste for true
+// tudo que estiver dentro da classe so será ativado quando o profile de dev for true
 @Configuration
 @Profile("dev")
 public class DevConfig {
@@ -31,5 +33,10 @@ public class DevConfig {
 		
 		dbService.instantiateTestDatabase();
 		return true;
+	}
+	
+	@Bean
+	public EmailService emailService(){
+		return new SmtpEmailService();
 	}
 }
