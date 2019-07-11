@@ -3,18 +3,22 @@ package com.marlon.cursomodeloconceitual.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.marlon.cursomodeloconceitual.domain.Cliente;
 import com.marlon.cursomodeloconceitual.domain.ItemPedido;
 import com.marlon.cursomodeloconceitual.domain.PagamentoComBoleto;
 import com.marlon.cursomodeloconceitual.domain.Pedido;
 import com.marlon.cursomodeloconceitual.domain.enums.EstadoPagamento;
-import com.marlon.cursomodeloconceitual.repositories.ClienteRepository;
 import com.marlon.cursomodeloconceitual.repositories.ItemPedidoRepository;
 import com.marlon.cursomodeloconceitual.repositories.PagamentoRepository;
 import com.marlon.cursomodeloconceitual.repositories.PedidoRepository;
-import com.marlon.cursomodeloconceitual.repositories.ProdutoRepository;
+import com.marlon.cursomodeloconceitual.security.UserSS;
+import com.marlon.cursomodeloconceitual.services.exceptions.AuthorizationException;
 import com.marlon.cursomodeloconceitual.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -73,4 +77,18 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
 	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+		
+		UserSS user = UserService.authenticated();
+		// não ta autenticado
+		if(user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteService.find(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
+	}
+	
 }
