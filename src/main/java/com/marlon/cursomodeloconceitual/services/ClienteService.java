@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import com.marlon.cursomodeloconceitual.domain.Cidade;
 import com.marlon.cursomodeloconceitual.domain.Cliente;
 import com.marlon.cursomodeloconceitual.domain.Endereco;
+import com.marlon.cursomodeloconceitual.domain.enums.Perfil;
 import com.marlon.cursomodeloconceitual.domain.enums.TipoCliente;
 import com.marlon.cursomodeloconceitual.dto.ClienteDTO;
 import com.marlon.cursomodeloconceitual.dto.ClienteNewDTO;
 import com.marlon.cursomodeloconceitual.repositories.CidadeRepository;
 import com.marlon.cursomodeloconceitual.repositories.ClienteRepository;
 import com.marlon.cursomodeloconceitual.repositories.EnderecoRepository;
+import com.marlon.cursomodeloconceitual.security.UserSS;
+import com.marlon.cursomodeloconceitual.services.exceptions.AuthorizationException;
 import com.marlon.cursomodeloconceitual.services.exceptions.DataIntegrityException;
 import com.marlon.cursomodeloconceitual.services.exceptions.ObjectNotFoundException;
 
@@ -38,6 +41,13 @@ public class ClienteService {
 	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		// faz a busca e verifica se não é nulo ou se não é admin e se o id é diferente do qual foi buscado
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Cliente obj = repo.findOne(id); // encontrar o id, se nao achar retorna null
 		if(obj == null) {
 			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id
