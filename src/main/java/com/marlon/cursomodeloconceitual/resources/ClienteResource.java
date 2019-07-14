@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.marlon.cursomodeloconceitual.domain.Categoria;
 import com.marlon.cursomodeloconceitual.domain.Cliente;
-import com.marlon.cursomodeloconceitual.dto.CategoriaDTO;
 import com.marlon.cursomodeloconceitual.dto.ClienteDTO;
 import com.marlon.cursomodeloconceitual.dto.ClienteNewDTO;
 import com.marlon.cursomodeloconceitual.services.ClienteService;
@@ -84,6 +83,13 @@ public class ClienteResource {
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri(); // enumerar de forma crescente o id do uri
+		return ResponseEntity.created(uri).build();
+	}
+	
+	//iNSERIR
+	@RequestMapping(value="/picture", method=RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file){ // @RequestParam(name="file") = reconhcer que chegou uma requisição do http 
+		URI uri = service.uploadProfilePicture(file);
 		return ResponseEntity.created(uri).build();
 	}
 }
