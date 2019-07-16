@@ -99,6 +99,22 @@ public class ClienteService {
 		return repo.findAll();
 	}
 	
+	public Cliente findByEmail(String email) {
+		
+		// usuario autenticado
+		UserSS user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !email.equals(user.getUsername())) { // se é nulo ou  não é adm e o email não é igual do usuario autenticado
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		Cliente obj = repo.findByEmail(email);
+		if(obj == null) {
+			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + user.getId()
+					+ ", Tipo: " + Cliente.class.getName());
+		}
+		return obj;
+	}
+	
 	// paginção: mostrar uma quantidade especifica
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
 	
